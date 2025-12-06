@@ -1,104 +1,102 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// 🌟 Defining the structure of a Node
-// Every node stores an integer (data) and a pointer to the next node (next)
+/* ⭐ Node Structure
+   A Node stores:
+   1. data → integer value
+   2. next → pointer to the next node in the linked list
+*/
 struct Node {
     int data;
     struct Node* next;
 };
 
-// 🌟 Global head pointer — points to the first node of the linked list
+/* ⭐ Head Pointer
+   This always points to the FIRST node of the linked list.
+   If head = NULL → list is empty.
+*/
 struct Node* head = NULL;
 
 
 /* ----------------------------------------------------------
    🔵 insertAtBegin()
-   Purpose → Insert a new node at the *START* of the linked list.
+   Inserts a new node at the START of the linked list.
+
    Steps:
-   1. Create new node using malloc()
-   2. Ask user for element to insert
-   3. Set new node's next = current head
-   4. Update head to newNode
+   1. Allocate memory for a new node.
+   2. Take input from the user.
+   3. Set newNode->next to current head.
+   4. Move head to point to the new node.
 ---------------------------------------------------------- */
 void insertAtBegin() {
     int element;
-
-    // Step 1: Create new node
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
 
-    // Step 2: Take user input
     printf("Enter Element to Insert at Beginning: ");
     scanf("%d", &element);
 
-    // Step 3: Fill node data
     newNode->data = element;
-
-    // Step 4: Connect new node to existing list
-    newNode->next = head;
-
-    // Step 5: Update head
-    head = newNode;
+    newNode->next = head;   // Connect new node to the current list
+    head = newNode;         // Update head to the new node
 }
 
 
 /* ----------------------------------------------------------
    🔵 insertAtEnd()
-   Purpose → Insert a new node at the *END* of the linked list.
+   Inserts a new node at the END of the linked list.
+
    Steps:
-   1. Create new node
-   2. Take input
-   3. If list empty → new node becomes head
-   4. If only 1 node → attach after head
-   5. If multiple nodes → reach last node and insert
+   1. Create a new node.
+   2. If list is empty → head = newNode.
+   3. If list has only 1 node → attach after head.
+   4. Otherwise traverse to the last node and attach newNode.
 ---------------------------------------------------------- */
 void insertAtEnd() {
     int element;
-
-    // Step 1: Create Node
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
 
-    // Step 2: Input
     printf("Enter Element to Insert at End: ");
     scanf("%d", &element);
 
     newNode->data = element;
     newNode->next = NULL;
 
-    // Step 3: If list empty
+    // CASE 1: Empty list
     if (head == NULL) {
         head = newNode;
         return;
     }
 
-    // Step 4: If only one node
+    // CASE 2: Only one node
     if (head->next == NULL) {
         head->next = newNode;
         return;
     }
 
-    // Step 5: More than one node → reach last node
+    // CASE 3: More than one node → find the last node
     struct Node* curr = head;
     while (curr->next != NULL) {
         curr = curr->next;
     }
 
-    // Attach new node at last
-    curr->next = newNode;
+    curr->next = newNode;  // Link last node to new node
 }
 
 
 /* ----------------------------------------------------------
    🔵 insertAtPlace()
-   Purpose → Insert node at *specific index* (0-based)
+   Inserts a node at a user-given INDEX (0-based).
+
    Example:
-   index = 0 → Insert at beginning
+   index = 0 → Insert at the beginning
    index = 3 → Insert at 4th position
+
+   Logic:
+   - Traverse the list until the correct position.
+   - Insert the new node between prev and curr.
 ---------------------------------------------------------- */
 void insertAtPlace() {
     int element, index;
-
-    // Step 1: Create Node
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
 
     printf("Enter Element to Insert: ");
@@ -109,14 +107,126 @@ void insertAtPlace() {
     printf("Enter Index (Position): ");
     scanf("%d", &index);
 
-    // Step 2: Inserting at beginning
+    // CASE 1: Insert at beginning
     if (index == 0) {
         newNode->next = head;
         head = newNode;
         return;
     }
 
-    // Step 3: Traverse until index
+    struct Node* curr = head;
+    struct Node* prev = NULL;
+
+    // Traverse until required index
+    while (curr != NULL && index > 0) {
+        prev = curr;
+        curr = curr->next;
+        index--;
+    }
+
+    // If index still > 0 → invalid
+    if (index > 0) {
+        printf("Invalid Position!\n");
+        free(newNode);
+        return;
+    }
+
+    // Insert node between prev and curr
+    prev->next = newNode;
+    newNode->next = curr;
+}
+
+
+/* ----------------------------------------------------------
+   🔵 DeletionAtBegin()
+   Deletes the FIRST node of the linked list.
+
+   Steps:
+   1. If list empty → cannot delete.
+   2. Store head in temp.
+   3. Move head to next node.
+   4. free(temp) to delete memory.
+---------------------------------------------------------- */
+void DeletionAtBegin() {
+    if (head == NULL) {
+        printf("List is Empty\n");
+        return;
+    }
+
+    struct Node* temp = head;
+    head = head->next;  // Move head to the next node
+    free(temp);         // Delete old head
+
+    printf("Node Deleted from Beginning\n");
+}
+
+
+/* ----------------------------------------------------------
+   🔵 DeleteAtEnd()
+   Deletes the LAST node of the linked list.
+
+   Logic:
+   - If 0 nodes → cannot delete
+   - If 1 node → delete head
+   - Otherwise traverse until second-last node
+---------------------------------------------------------- */
+void DeleteAtEnd() {
+    if (head == NULL) {
+        printf("List is Empty\n");
+        return;
+    }
+
+    // CASE 1: Only one node
+    if (head->next == NULL) {
+        struct Node* temp = head;
+        head = NULL;
+        free(temp);
+        return;
+    }
+
+    // CASE 2: More than one node
+    struct Node* curr = head;
+    struct Node* prev = NULL;
+
+    // Reach the last node
+    while (curr->next != NULL) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    prev->next = NULL;  // Remove last node
+    free(curr);         // Delete last node
+}
+
+
+/* ----------------------------------------------------------
+   🔵 DeleteAtPlace()
+   Deletes a node at a specific index.
+
+   Logic:
+   - If index = 0 → delete head
+   - Traverse list until index
+   - Update prev->next to skip curr
+   - Delete curr
+---------------------------------------------------------- */
+void DeleteAtPlace() {
+    if (head == NULL) {
+        printf("List is Empty\n");
+        return;
+    }
+
+    int index;
+    printf("Enter Index to be Deleted: ");
+    scanf("%d", &index);
+
+    // CASE 1: Delete first node
+    if (index == 0) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+        return;
+    }
+
     struct Node* curr = head;
     struct Node* prev = NULL;
 
@@ -126,29 +236,30 @@ void insertAtPlace() {
         index--;
     }
 
-    // If index out of range
-    if (index > 0) {
-        printf("Invalid Position!\n");
-        free(newNode);
+    // If curr becomes NULL → index out of range
+    if (curr == NULL) {
+        printf("Invalid Position\n");
         return;
     }
 
-    // Step 4: Insert node between prev and curr
-    prev->next = newNode;
-    newNode->next = curr;
+    prev->next = curr->next;
+    free(curr);
 }
 
 
 /* ----------------------------------------------------------
    🌟 MAIN FUNCTION
-   Calls all insertion functions so user can test them
+   Runs sample operations for demonstration.
 ---------------------------------------------------------- */
 int main() {
-    printf("---- Linked List Insertion Demo ----\n");
+    printf("---- Linked List Insertion & Deletion Demo ----\n");
 
     insertAtBegin();
     insertAtEnd();
     insertAtPlace();
+    DeletionAtBegin();
+    DeleteAtEnd();
+    DeleteAtPlace();
 
     return 0;
 }
