@@ -1,3 +1,5 @@
+// Program: CreateSingleNode.c
+// Description: Demonstrates how to create the first node of a singly linked list in C
 #include <stdio.h>   // Provides printf(), scanf() and basic input/output functions
 #include <stdlib.h>  // Provides malloc(), free() for dynamic memory allocation
 
