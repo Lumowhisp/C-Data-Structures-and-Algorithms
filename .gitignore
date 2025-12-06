@@ -1,0 +1,40 @@
+# Compiled object files
+*.o
+*.obj
+
+# Compiled binary files
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.stackdump
+
+# Build folders
+/build/
+/dist/
+/bin/
+/Debug/
+/Release/
+
+# MacOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VSCode settings
+.vscode/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.cache
+*~
+
+# Backup files
+*.bak
+*.swp
+*.swo
